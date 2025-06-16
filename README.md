@@ -16,3 +16,13 @@ Some defaults you may be interested in changing:
 - `IRRcvPin`: Data pin from our IR Receiver. Digital Pin 7 by default.
 - `IRCommands`: Enum that lists the hex codes received from the remote. This may be different depending on your IR Remote, or if you want to customize the buttons.
 - `ammo`: Default 5.
+
+## Setup (Windows)
+1. Upload the .ino file to your Arduino.
+2. Find out which COM port the HC-05 has registered.
+Navigate to your Bluetooth settings, then to "More Bluetooth settings". Select the "COM Ports" tab, and note the 'Outgoing' COM port for the HC-05.
+![image](https://github.com/user-attachments/assets/8da01b48-d356-43f9-bcf7-d2e6796f1e01)
+
+3. Open PuTTY and the Connection Type to SERIAL. Your Serial Line will be the COM port that we found in the previous step. Ensure the BAUD rate is at 9600.
+4. Plug-in the Arduino. Assuming you have previously connected to the HC-05, you will automatically connect with the HC-05 once you have initiated the serial connection on PuTTY.
+5. Start blasting! The response will come through the PuTTY instance and you can review your score.
