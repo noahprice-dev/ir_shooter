@@ -17,6 +17,12 @@
 // -- Infrared --
 IRrecv irrecv(IRRcvPin);
 uint32_t last_decodedRawData = 0;  // store the last received raw data
+enum class IRCommands : uint32_t {
+  SHOOT = 0xBF40FF00,
+  RESET = 0xB847FF00,
+  RELOAD = 0xE619FF00,
+  SHOW_SCORE = 0xE916FF00
+}
 
 // -- Bluetooth --
 SoftwareSerial BTSerial(RxPin, TxPin);
@@ -34,7 +40,7 @@ void TranslateIR() {
 }
   // Translate our button press to a BT Serial Message.
   switch (irrecv.decodedIRData.decodedRawData) {
-    case 0xBF40FF00: // Press Pause/Play registers a hit
+    case IRCommands::SHOOT: // Press Pause/Play registers a hit
      if (ammo > 0){
       BTSerial.println("shoot");
       score += 1; 
@@ -44,19 +50,24 @@ void TranslateIR() {
     }
     break;
 
-    case 0xB847FF00: // Press Func/Stop to reset
+    case IRCommands::RELOAD: // Press EQ to reload
+      BTSerial.println("reload");
+      ammo = 5;
+      break;
+
+    case IRCommands::RESET // Press Func/Stop to reset
       BTSerial.println("reset");
       score = 0;
       // debug helper to clear our screen, other things will presumable occur.
-      // This uses a VT1000 code to clear my PuTTY terminal - Your mileage may vary depending on your terminal.
+      // This uses a VT1000 code to clear my PuTTY terminal - Your mileage may vary depending on your COM terminal of choice.
       BTSerial.print("\033[0H\033[0J");
-      break;   
-    
-    case 0xE619FF00: // Press EQ to reload
-      BTSerial.println("reload");
-      ammo = 5;
-      break;  
-    
+      break;
+
+    case IRCommands::SHOW_SCORE: // Press '0' to show score.
+        BTSerial.print("Score: ");
+		BTSerial.println(score);
+         break;
+
     default:
       Serial.println("other");
         last_decodedRawData = irrecv.decodedIRData.decodedRawData;  // Assign our data to the latest thing.
